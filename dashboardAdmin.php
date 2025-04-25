@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PARK-EZ</title>
+    <link rel="stylesheet" href="dashboardAdmin.css"> <!-- Link to the separate CSS file -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+</head>
+<body>
+    <div class="sidebar">
+        <!-- Logo and Name Section -->
+        <div class="header">
+        <div class="logo">
+            <img src="img/lotuslogo.png" alt="Lotus Mall Logo">
+            <h3>LOTUS MALL PARKING</h3>
+        </div>
+    </div>
+    
+        <!-- Navigation Buttons with Icons -->
+        <button class="tab-btn active" onclick="openTab('dashboard', this)">
+            <i class="fas fa-tachometer-alt"></i> Dashboard
+        </button>
+        <button class="tab-btn" onclick="openTab('parking', this)">
+            <i class="fas fa-car"></i> Parking
+        </button>
+        <button class="tab-btn" onclick="openTab('reports', this)">
+            <i class="fas fa-file-alt"></i> Reports
+        </button>
+    
+        <!-- Logout Button (Moved to Bottom) -->
+        <div class="logout-container">
+            <button class="tab-btn logout-btn" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </button>
+        </div>
+    </div>
+    
+    <div class="content">
+    <div id="dashboard" class="tab">
+            <h2>Dashboard</h2>
+
+            
+        <!-- Ticket Containers -->
+        <div class="ticket-container">
+            <!-- Ticket 1 -->
+            <div class="ticket">
+                <div class="ticket-icon">
+                    <i class="fas fa-car"></i> <!-- Replace with actual logo if needed -->
+                </div>
+                <div class="ticket-info">
+                    <h3>Total Vehicles</h3>
+                    <p>Unknown</p>
+                </div>
+            </div>
+
+            <!-- Ticket 2 -->
+            <div class="ticket">
+                <div class="ticket-icon">
+                    <i class="fas fa-users"></i> <!-- Replace with actual logo if needed -->
+                </div>
+                <div class="ticket-info">
+                    <h3>Registered Users</h3>
+                    <p>Unknown</p>
+                </div>
+            </div>
+
+            <!-- Ticket 3 -->
+            <div class="ticket">
+                <div class="ticket-icon">
+                    <i class="fas fa-file-alt"></i> <!-- Replace with actual logo if needed -->
+                </div>
+                <div class="ticket-info">
+                    <h3>Parking Reports</h3>
+                    <p>Unknown</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="charts">
+        <div class="chart-container">
+            <canvas id="salesChart"></canvas>
+        </div>
+        <div class="chart-container">
+            <canvas id="horizontalBarChart"></canvas>
+        </div>
+        
+    </div>
+  
+    <div class="table-container">
+        <h3>Recent Parking</h3>
+        <table id="parkingTable" class="display" style="width:100%">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Plate Number</th>
+                    <th>Vehicle Type</th>
+                    <th>Time In</th>
+                    <th>Time Out</th>
+                    <th>Parking Slot</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>John Doe</td>
+                    <td>ABC-1234</td>
+                    <td>Car</td>
+                    <td>08:00 AM</td>
+                    <td>10:00 AM</td>
+                    <td>A1</td>
+                    <td>Completed</td>
+                </tr>
+                <tr>
+                    <td>Jane Smith</td>
+                    <td>XYZ-5678</td>
+                    <td>Motorcycle</td>
+                    <td>09:15 AM</td>
+                    <td>11:30 AM</td>
+                    <td>B2</td>
+                    <td>Completed</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    
+    <script>
+        $(document).ready(function() {
+            $('#parkingTable').DataTable();
+        });
+    
+
+        // Horizontal Bar Chart - Most Frequent Vehicles Parked
+        const ctx3 = document.getElementById('horizontalBarChart').getContext('2d');
+        new Chart(ctx3, {
+            type: 'bar',
+            data: {
+                labels: ['Car', 'Motorcycle', 'Bicycle', 'Electric Bike'],
+                datasets: [{
+                    label: 'Most Frequent Vehicles Parked',
+                    data: [200, 150, 120, 80],
+                    backgroundColor: '#42a5f5',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                scales: {
+                    x: {beginAtZero: true}
+                }
+            }
+        });
+
+        // Sales Chart - Sales Data
+        const ctx4 = document.getElementById('salesChart').getContext('2d');
+        new Chart(ctx4, {
+            type: 'line',
+            data: {
+                labels: ['January', 'February', 'March', 'April', 'May', 'June'],
+                datasets: [{
+                    label: 'Sales',
+                    data: [1500, 1800, 1700, 2000, 2100, 2300],
+                    borderColor: '#1565c0',
+                    fill: false,
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {beginAtZero: true}
+                }
+            }
+        });
+    </script>
+
+
+    </div>
+        <div id="parking" class="tab">
+            <h2>Parking</h2>
+            
+      <!-- Main Content -->
+      <div class="container">
+        
+        <!-- Tab Buttons -->
+        <div class="tabs">
+            <button class="tab-button active" data-target="car-parking">
+                <i class="fas fa-car"></i> 
+            </button>
+            <button class="tab-button" data-target="motor-parking">
+                <i class="fas fa-motorcycle"></i> 
+            </button>
+            <button class="tab-button" data-target="ebike-parking">
+                <i class="fas fa-bolt"></i>
+            </button>
+            <button class="tab-button" data-target="bike-parking">
+                <i class="fas fa-bicycle"></i> 
+            </button>
+        </div>
+
+        <!-- Car Parking -->
+        <div class="parking-section active" id="car-parking"> 
+            <div class="parking-lot" id="car-lot"></div>
+        </div>
+
+        <!-- Motor Parking -->
+        <div class="parking-section" id="motor-parking">  
+            <div class="parking-lot" id="motor-lot"></div>
+        </div>
+
+        <!-- E-Bike Parking -->
+        <div class="parking-section" id="ebike-parking">
+        <div class="parking-lot" id="ebike-lot"></div>
+        </div>
+
+        <!-- Bike Parking -->
+        <div class="parking-section" id="bike-parking">
+            
+            <div class="parking-lot" id="bike-lot"></div>
+        </div>
+
+        <!-- Legend -->
+        <div class="legend">
+            <div><span class="color-box" style="background: red;"></span> Occupied</div>
+            <div><span class="color-box" style="background: green;"></span> Selected</div>
+            <div><span class="color-box" style="background: lightgray;"></span> Available</div>
+        </div>
+    </div>
+
+
+        <!-- POP UP FORM FOR RESERVATION -->
+        <div class="modal-overlay" id="reservationModal">
+        <div class="reservation-form">
+            <div class="form-header">
+                <h2>Reserve Parking Slot</h2>
+                <button class="close-btn" id="closeModal">&times;</button>
+            </div>
+            <form id="parkingForm">
+                <div class="form-group">
+                    <label for="name">Full Name</label>
+                    <input type="text" id="name" required placeholder="Enter your full name">
+                </div>
+                
+                <div class="form-group">
+                    <label for="plateNumber">Plate Number</label>
+                    <input type="text" id="plateNumber" required placeholder="Enter vehicle plate number">
+                </div>
+                
+                <div class="form-group">
+                    <label for="vehicleType">Vehicle Type</label>
+                    <select id="vehicleType" required>
+                        <option value="">Select vehicle type</option>
+                        <option value="car">Car</option>
+                        <option value="motorcycle">Motorcycle</option>
+                        <option value="bicycle">Bicycle</option>
+                        <option value="e-bike">E-Bike</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="timeIn">Time In</label>
+                    <input type="datetime-local" id="timeIn" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="timeOut">Time Out</label>
+                    <input type="datetime-local" id="timeOut" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="parkingSlot">Parking Slot</label>
+                    <input type="text" id="parkingSlot" class="disabled-input" readonly>
+                </div>
+                
+                <div class="form-group">
+                    <label for="status">Status</label>
+                    <input type="text" id="status" value="Reserved" class="disabled-input" readonly>
+                </div>
+                
+                <button type="submit" class="submit-btn">Confirm Reservation</button>
+            </form>
+        </div>
+    </div>
+
+     <!-- POP UP FORM FOR PARKING DETAILS -->
+    <div id="parkingDetailsContainer" class="modal-overlay">
+    <div class="reservation-form">
+        <div class="form-header">
+            <h2>Parking Details</h2>
+            <button id="closeDetails" class="close-btn">&times;</button>
+        </div>
+
+        <div class="form-group">
+            <label>Slot</label>
+            <input type="text" id="detailSlot" class="disabled-input" disabled>
+        </div>
+
+        <div class="form-group">
+            <label>Name</label>
+            <input type="text" id="detailName" class="disabled-input" disabled>
+        </div>
+
+        <div class="form-group">
+            <label>Vehicle Type</label>
+            <input type="text" id="detailVehicle" class="disabled-input" disabled>
+        </div>
+
+        <div class="form-group">
+            <label>Date</label>
+            <input type="text" id="detailDate" class="disabled-input" disabled>
+        </div>
+
+        <div class="form-group">
+            <label>Time</label>
+            <input type="text" id="detailTime" class="disabled-input" disabled>
+        </div>
+        
+        <button id="proceedToPaymentBtn" class="submit-btn">Proceed to Payment</button>
+
+    </div>
+
+    <!-- Payment Confirmation Modal -->
+    <div id="paymentConfirmationModal" class="modal-overlay">
+        <div class="reservation-form">
+        <div class="form-header">
+            <div style="
+                background-color: #2CA93C;
+                color: white;
+                font-weight: bold;
+                font-size: 24px; /* Increased the font size */
+                width: 45px; /* Increased the circle size */
+                height: 45px; /* Increased the circle size */
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: 50%;
+                text-align: center;
+            ">
+            !
+        </div>
+        </div>
+            <p>Do you want to confirm payment?</p>
+            <div style="display: flex; justify-content: space-between; gap: 10px; margin-top: 20px;">
+                <button class="submit-btn" id="cancelPaymentBtn" style="background: #bdc3c7;">Cancel</button>
+                <button class="submit-btn" id="confirmPaymentBtn" style="background: #3B8D43;">Yes</button>
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <script>
+        // Function to Generate Parking Layout matching your image
+        function generateParkingLayout(containerId, columns, slotPairs, occupiedSlots, iconClass) {
+            const parkingLot = document.getElementById(containerId);
+            parkingLot.innerHTML = '';
+
+            // Create columns (A, B, C)
+            for (let col = 0; col < columns.length; col++) {
+                const column = document.createElement('div');
+                column.classList.add('parking-column');
+                
+                // Add column header (A, B, C)
+                const header = document.createElement('div');
+                header.classList.add('column-header');
+                header.textContent = columns[col];
+                column.appendChild(header);
+                
+                // Create slot pairs (1-8 on left, 9-16 on right)
+                for (let i = 0; i < slotPairs.length; i++) {
+                    const row = document.createElement('div');
+                    row.classList.add('slot-row');
+                    
+                    // Create left slot (1-8)
+                    const leftSlotNum = `${columns[col]}${slotPairs[i][0]}`;
+                    const leftSlot = createSlot(leftSlotNum, occupiedSlots, iconClass);
+                    
+                    // Create right slot (9-16)
+                    const rightSlotNum = `${columns[col]}${slotPairs[i][1]}`;
+                    const rightSlot = createSlot(rightSlotNum, occupiedSlots, iconClass);
+                    
+                    row.appendChild(leftSlot);
+                    row.appendChild(rightSlot);
+                    column.appendChild(row);
+                }
+                
+                parkingLot.appendChild(column);
+            }
+        }
+
+        function createSlot(slotNumber, occupiedSlots, iconClass) {
+            const slot = document.createElement('div');
+            slot.classList.add('slot');
+            
+            if (occupiedSlots.includes(slotNumber)) {
+                slot.classList.add('occupied');
+            }
+            
+            slot.innerHTML = `
+                <i class="${iconClass} slot-icon"></i>
+                <span>${slotNumber.substring(1)}</span>
+            `;
+            slot.dataset.slot = slotNumber;
+            
+            slot.addEventListener('click', function() {
+                if (!this.classList.contains('occupied')) {
+                    this.classList.toggle('selected');
+                }
+            });
+            
+            return slot;
+        }
+
+        // Generate Slots for Each Parking Type
+        const columns = ['A', 'B', 'C'];
+        const slotPairs = [
+            [1, 9], [2, 10], [3, 11], [4, 12],
+            [5, 13], [6, 14], [7, 15], [8, 16]
+        ];
+        
+        generateParkingLayout("car-lot", columns, slotPairs, ["A1", "B10", "C15"], "fas fa-car");
+        generateParkingLayout("motor-lot", columns, slotPairs, ["A2", "B9", "C16"], "fas fa-motorcycle");
+        generateParkingLayout("ebike-lot", columns, slotPairs, ["A5", "B12"], "fas fa-bolt");
+        generateParkingLayout("bike-lot", columns, slotPairs, ["A8", "B14"], "fas fa-bicycle");
+
+        // Tab Switching
+        document.querySelectorAll(".tab-button").forEach(btn => {
+            btn.addEventListener("click", () => {
+                document.querySelectorAll(".tab-button, .parking-section").forEach(el => el.classList.remove("active"));
+                btn.classList.add("active");
+                document.getElementById(btn.dataset.target).classList.add("active");
+            });
+        });
+
+
+        // FOR POPUP FORM MODAL
+        const reservationModal = document.getElementById('reservationModal');
+        const closeModal = document.getElementById('closeModal');
+        const parkingForm = document.getElementById('parkingForm');
+        const parkingSlotInput = document.getElementById('parkingSlot');
+        let selectedSlotElement = null;
+        
+        // Modify your slot click handler to show the modal
+        function createSlot(slotNumber, occupiedSlots, iconClass) {
+        const slot = document.createElement('div');
+        slot.classList.add('slot');
+
+        // Check if the slot is occupied and mark it as occupied
+        if (occupiedSlots.includes(slotNumber)) {
+            slot.classList.add('occupied');
+        }
+
+        slot.innerHTML = `
+            <div class="corner-notch"></div>
+            <i class="${iconClass} slot-icon"></i>
+            <div class="slot-number">${slotNumber.substring(1)}</div>
+        `;
+    
+        slot.dataset.slot = slotNumber;
+
+        slot.addEventListener('click', function () {
+            if (this.classList.contains('occupied')) {
+                // Slot is occupied, show the parking details modal
+                const sampleData = {
+                    name: "Kim Danger",
+                    vehicleType: "Motorcycle",
+                    timeIn: "2025-03-10T11:24:00",
+                    timeOut: "2025-03-10T12:24:00"
+                };
+                showParkingDetails(slotNumber, sampleData); // Show parking details modal
+            } else {
+                // Slot is available, handle selection and reservation
+                // Remove selection from other slots
+                document.querySelectorAll('.slot.selected').forEach(s => {
+                    s.classList.remove('selected');
+                });
+
+                // Toggle selection
+                this.classList.toggle('selected');
+
+                if (this.classList.contains('selected')) {
+                    selectedSlotElement = this;
+                    parkingSlotInput.value = slotNumber;
+                    showReservationModal(); // Show reservation modal
+                } else {
+                    selectedSlotElement = null;
+                }
+            }
+        });
+
+        return slot;
+    }
+
+
+
+        // RESERVATION MODAL
+        function showReservationModal() {
+            reservationModal.classList.add('active');
+            document.body.style.overflow = 'hidden'; // Prevent scrolling
+        }
+        
+        function hideReservationModal() {
+            reservationModal.classList.remove('active');
+            document.body.style.overflow = ''; // Re-enable scrolling
+        }
+        
+        // Close modal when clicking X or outside
+        closeModal.addEventListener('click', hideReservationModal);
+        reservationModal.addEventListener('click', function(e) {
+            if (e.target === reservationModal) {
+                hideReservationModal();
+            }
+        });
+        
+        // Form submission
+        parkingForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Get form values
+            const name = document.getElementById('name').value;
+            const plateNumber = document.getElementById('plateNumber').value;
+            const vehicleType = document.getElementById('vehicleType').value;
+            const timeIn = document.getElementById('timeIn').value;
+            const timeOut = document.getElementById('timeOut').value;
+            const slot = parkingSlotInput.value;
+            
+            // Here you would typically send this data to a server
+            console.log('Reservation Details:', {
+                name,
+                plateNumber,
+                vehicleType,
+                timeIn,
+                timeOut,
+                slot,
+                status: 'Reserved'
+            });
+            
+            // Mark the slot as occupied
+            if (selectedSlotElement) {
+                selectedSlotElement.classList.remove('selected');
+                selectedSlotElement.classList.add('occupied');
+                selectedSlotElement.innerHTML = `
+                    <div class="corner-notch"></div>
+                    <i class="fas fa-lock slot-icon"></i>
+                    <div class="slot-number">${slot.substring(1)}</div>
+                `;
+            }
+            
+            // Reset form and close modal
+            parkingForm.reset();
+            hideReservationModal();
+            
+            // Show success message
+            alert(`Reservation for slot ${slot} confirmed!`);
+        });
+        
+        // Set default time values (current time for timeIn, +1 hour for timeOut)
+        window.addEventListener('DOMContentLoaded', () => {
+            const now = new Date();
+            const timeIn = document.getElementById('timeIn');
+            const timeOut = document.getElementById('timeOut');
+            
+            // Format for datetime-local input
+            const formatDateTime = (date) => {
+                return date.toISOString().slice(0, 16);
+            };
+            
+            timeIn.value = formatDateTime(now);
+            
+            const oneHourLater = new Date(now.getTime() + 60 * 60 * 1000);
+            timeOut.value = formatDateTime(oneHourLater);
+        });
+
+        // PARKING DETAILS MODAL
+        function showParkingDetails(slot, data) {
+        document.getElementById('detailSlot').value = slot;
+        document.getElementById('detailName').value = data.name;
+        document.getElementById('detailVehicle').value = data.vehicleType;
+
+        const inDate = new Date(data.timeIn);
+        const outDate = new Date(data.timeOut);
+
+        const optionsDate = { year: 'numeric', month: 'long', day: 'numeric' };
+        const optionsTime = { hour: '2-digit', minute: '2-digit', hour12: true };
+
+        document.getElementById('detailDate').value = inDate.toLocaleDateString('en-US', optionsDate);
+        document.getElementById('detailTime').value = inDate.toLocaleTimeString('en-US', optionsTime);
+
+        document.getElementById('parkingDetailsContainer').classList.add('active');
+    }
+
+    document.getElementById('closeDetails').addEventListener('click', () => {
+        document.getElementById('parkingDetailsContainer').classList.remove('active');
+    });
+
+    const proceedBtn = document.getElementById('proceedToPaymentBtn');
+    const confirmationModal = document.getElementById('paymentConfirmationModal');
+    const confirmPaymentBtn = document.getElementById('confirmPaymentBtn');
+    const cancelPaymentBtn = document.getElementById('cancelPaymentBtn');
+
+    proceedBtn.addEventListener('click', () => {
+        confirmationModal.classList.add('active'); // Show modal
+    });
+
+    cancelPaymentBtn.addEventListener('click', () => {
+        confirmationModal.classList.remove('active'); // Hide modal
+    });
+
+    confirmPaymentBtn.addEventListener('click', () => {
+        window.location.href = 'payment.php'; // Redirect
+    });
+
+
+        
+    </script>
+    
+</div>
+
+        <div id="reports" class="tab">
+    <h2>Reports</h2>
+
+    <!-- Search Bar -->
+    <div class="search-container">
+        <input type="text" placeholder="Search here" class="search-input">
+        <i class="fas fa-search search-icon"></i>
+    </div>
+
+    <!-- Filters -->
+    <div class="filters">
+        <label class="filter-label">Filter By:</label>
+        <select class="filter-dropdown">
+            <option>Select Date</option>
+        </select>
+        <select class="filter-dropdown">
+            <option>Vehicle Type</option>
+        </select>
+        <select class="filter-dropdown">
+            <option>Park Slot</option>
+        </select>
+        <button class="generate-btn">Generate</button>
+    </div>
+
+    <!-- Reports Table -->
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th><input type="checkbox"></th>
+                    <th>Name</th>
+                    <th>Vehicle Type</th>
+                    <th>Time In</th>
+                    <th>Time Out</th>
+                    <th>Park Slot</th>
+                    <th>Plate No.</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><input type="checkbox"></td>
+                    <td>Lindsey Stroud</td>
+                    <td>Car</td>
+                    <td>1:00 PM</td>
+                    <td>-</td>
+                    <td>A05</td>
+                    <td>ABC1234</td>
+                    <td>Parked</td>
+                </tr>
+                <tr>
+                    <td><input type="checkbox"></td>
+                    <td>Michael Owen</td>
+                    <td>Motor</td>
+                    <td>12:05 PM</td>
+                    <td>12:45 PM</td>
+                    <td>F01</td>
+                    <td>FGH5692</td>
+                    <td>Exited</td>
+                </tr>
+                <tr>
+                    <td><input type="checkbox"></td>
+                    <td>Mary Jane</td>
+                    <td>Electric Bike</td>
+                    <td>11:55 AM</td>
+                    <td>-</td>
+                    <td>M10</td>
+                    <td>YUK6038</td>
+                    <td>Parked</td>
+                </tr>
+                <tr>
+                    <td><input type="checkbox"></td>
+                    <td>Peter Dodle</td>
+                    <td>Bike</td>
+                    <td>11:52 AM</td>
+                    <td>12:22 PM</td>
+                    <td>H08</td>
+                    <td>FKCM0987</td>
+                    <td>Exited</td>
+                </tr>
+            </tbody>
+        </table>
+ </div>
+    </div>
+        </div>
+    
+    <script>
+    // Function to handle tab switching
+    function openTab(tabName, element) {
+        // Remove 'active' class from all tabs
+        document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+        // Add 'active' class to the selected tab
+        document.getElementById(tabName).classList.add('active');
+        
+        // Remove 'active' class from all tab buttons
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+        // Add 'active' class to the clicked button
+        element.classList.add('active');
+    }
+
+    // Automatically open the 'dashboard' tab when the page loads
+    document.addEventListener("DOMContentLoaded", function() {
+        // Make sure the Dashboard tab is active on page load
+        const dashboardBtn = document.querySelector('.tab-btn'); // Get the first tab button (Dashboard)
+        openTab('dashboard', dashboardBtn); // Open the Dashboard tab
+    });
+
+    function logout() {
+    alert("Logging out...");
+    window.location.href = 'Login.php'; // Redirect to login.php
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,147 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+
+body {
+    display: flex;
+    justify-content: flex-start; 
+    align-items: center;
+    height: 100vh;
+    background: white;
+    overflow: hidden;
+    position: relative;
+    
+
+}
+
+
+body::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 65%;
+    height: 100%;
+    background: linear-gradient(to left, #053A0A, #1F4723, #3a7d3a);
+    clip-path: polygon(0 0, 90% 0, 50% 50%, 90% 100%, 0 100%);
+    /* clip-path: polygon(0 0, 50% 0, 90% 50%, 50% 100%, 0 100%); */
+    border-radius: 0 50px 50px 0;
+    z-index: 1;
+
+}
+
+
+.container {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    justify-content: flex-end; 
+    width: 100%;
+    padding-right: 8%;
+
+}
+
+
+.login-box {
+    width: 600px;
+    background: white;
+    padding: 60px;
+    border-radius: 12px;
+    text-align: center;
+    margin-top: -150px;
+
+}
+
+
+.logo img {
+    width: 400px;
+    margin-bottom: 20px;
+}
+
+
+h1 {
+    font-size: 36px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+
+.input-group {
+    position: relative;
+    margin-bottom: 15px;
+
+}
+
+.input-group input {
+    width: 100%;
+    padding: 12px 40px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 16px;
+    outline: none;
+}
+
+.input-group i {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: gray;
+}
+
+.input-group .fa-eye {
+    right: 12px;
+    left: auto;
+    cursor: pointer;
+}
+
+
+.forgot-password {
+    display: block;
+    text-align: center;
+    margin-bottom: 15px;
+    color: #666;
+    font-size: 14px;
+    text-decoration: none;
+}
+
+.forgot-password:hover {
+    text-decoration: underline;
+}
+
+
+button {
+    width: 100%;
+    padding: 12px;
+    background-color: #3a7d3a;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+button:hover {
+    background-color: #2d5d2d;
+}
+
+.sign-up {
+    display: block;
+    text-align: center;
+    margin-top: 15px;
+    margin-bottom: 15px;
+    color: #666;
+    font-size: 14px;
+    text-decoration: none;
+}
+
+.sign-up:hover {
+    text-decoration: underline;
+}

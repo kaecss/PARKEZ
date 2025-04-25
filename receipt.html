@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Lotus Parking Receipt</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="receipt.css">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+  <div class="main-container">
+    <div class="header">
+      <img src="img/lotus.png" alt="Lotus Logo">
+      <h2>Lotus Parking Receipt</h2>
+    </div>
+    
+
+    <div class="receipt-area">
+        <div>
+          <h3 class="subheading">Payment Breakdown</h3>
+          <div class="receipt-wrapper">
+        <div class="receipt">
+          <div class="receipt-header">
+            <img src="img/logo.png" alt="LOTUS Logo">
+            <p>Wed, May 27, 2020 • 9:27:53 AM</p>
+          </div>
+
+          <div style="border: 1px dashed #000; position: relative; padding: 20px 20px 20px; width: 250px; margin: auto; font-family: monospace; border-radius: 15px;">
+            <span style="position: absolute; top: -9px; left: 50%; transform: translateX(-50%); background: white; padding: 0 15px; font-weight: bold; border-radius: 5px;">
+              Receipt No
+            </span>
+          
+            <div style="text-align: center; font-size: 16px;">
+              0237-7746-8981-9028-5626
+            </div>
+          </div>
+          
+          
+          
+
+          <div class="info-line">Payment: <strong>Cash</strong></div>
+          <hr style="border: none; border-top: 1px dashed #000;">
+          <div class="info-line">Customer Name: <strong>Victor Shoaga</strong></div>
+          <div class="info-line">Car Type: <strong>SUV</strong></div>
+          <div class="info-line">Plate Number: <strong>TNC 5469</strong></div>
+          <hr style="border: none; border-top: 1px dashed #000;">
+          <div class="info-line">Base Rate: <strong>20 Php</strong></div>
+          <hr style="border: none; border-top: 1px dashed #000;">
+          <div class="info-line">Time In: <strong>5:16 PM</strong></div>
+          <div class="info-line">Time Out: <strong>6:30 PM</strong></div>
+          <div class="info-line">Total: <strong>20 + No of Mins Extented</strong></div>
+          <hr style="border: none; border-top: 1px dashed #000;">
+          <div class="info-line">Operator: <strong>Boss</strong></div>
+
+          <div class="barcode">
+            <img src="img/lotus.png" alt="LOTUS Logo">
+            <img src="img/barcode.png" alt="barcode">
+            <p>35-17-1-2bebe8</p>
+          </div>
+        </div>
+
+        <div class="arrow-right" onclick="confirmPayment()">➜</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function confirmPayment() {
+    Swal.fire({
+      icon: 'success',
+      title: 'Payment Confirmed!',
+      html: `
+        <div style="
+          background-color: #e6f4ea;
+          border-left: 5px solid #4caf50;
+          padding: 10px;
+          border-radius: 5px;
+          display: flex;
+          align-items: center;
+        ">
+          <div style="margin-right: 10px;">
+            <i class="fas fa-info-circle" style="font-size: 24px; color: #4caf50;"></i>
+          </div>
+          <div style="text-align:left;">
+            <strong>Notice</strong><br>
+            Driver may proceed to the exit point upon handing over the ticket.
+          </div>
+        </div>
+      `,
+      confirmButtonText: 'Print Receipt',
+      confirmButtonColor: '#2e7d32'
+      }).then(() => {
+        Swal.fire({
+          icon: 'success',
+          title: 'Payment Successful!',
+          showConfirmButton: false,
+          timer: 1500
+        });
+
+        localStorage.setItem('activeTab', 'parking');
+        setTimeout(() => {
+          window.location.href = 'dashboardAdmin.html';
+        }, 1500);
+      });
+    }
+  </script>
+</body>
+</html>
