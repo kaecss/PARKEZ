@@ -10,6 +10,8 @@
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
     <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
     <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 </head>
@@ -289,7 +291,8 @@
         </div>
     </div>
 
-     <!-- POP UP FORM FOR PARKING DETAILS -->
+    
+    <!-- POP UP FORM FOR PARKING DETAILS -->
     <div id="parkingDetailsContainer" class="modal-overlay">
     <div class="reservation-form">
         <div class="form-header">
@@ -334,7 +337,7 @@
                 <div style="background-color: #3D9D46; color: white; font-weight: bold; font-size: 30px; width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; border-radius: 50%; margin-bottom: 20px;">
                   !
                 </div>
-                <span style="font-size: 18px; font-weight: 600;">Do you want to confirm?</span>
+                <span style="font-size: 18px; font-weight: 600;">Do you want to confirm payment?</span>
               </div>
             `,
             showCancelButton: true,
@@ -358,27 +361,8 @@
           window.location.href = 'receipt.html';
         }
       </script>
-      
-      
-
-<style>
-  .swal2-cancel.swal-cancel-button {
-    color: #000;
-    border: 2px solid #2CA93C;
-    font-weight: 500;
-    padding: 6px 20px;
-    border-radius: 8px;
-  }
-
-  .swal2-confirm.swal-confirm-button {
-    background-color: #2CA93C !important;
-    font-weight: 500;
-    padding: 6px 20px;
-    border-radius: 8px;
-  }
-</style>
-
     </div>
+
     <script>
         // Function to Generate Parking Layout matching your image
         function generateParkingLayout(containerId, columns, slotPairs, occupiedSlots, iconClass) {
@@ -463,19 +447,18 @@
         });
 
 
-        // FOR POPUP FORM MODAL
-        const reservationModal = document.getElementById('reservationModal');
-        const closeModal = document.getElementById('closeModal');
-        const parkingForm = document.getElementById('parkingForm');
-        const parkingSlotInput = document.getElementById('parkingSlot');
-        let selectedSlotElement = null;
-        
-        // Modify your slot click handler to show the modal
-        function createSlot(slotNumber, occupiedSlots, iconClass) {
+    // FOR RESERVATION POPUP FORM MODAL
+    const reservationModal = document.getElementById('reservationModal');
+    const closeModal = document.getElementById('closeModal');
+    const parkingForm = document.getElementById('parkingForm');
+    const parkingSlotInput = document.getElementById('parkingSlot');
+    let selectedSlotElement = null;
+
+    // Function to create a slot
+    function createSlot(slotNumber, occupiedSlots, iconClass) {
         const slot = document.createElement('div');
         slot.classList.add('slot');
 
-        // Check if the slot is occupied and mark it as occupied
         if (occupiedSlots.includes(slotNumber)) {
             slot.classList.add('occupied');
         }
@@ -485,33 +468,29 @@
             <i class="${iconClass} slot-icon"></i>
             <div class="slot-number">${slotNumber.substring(1)}</div>
         `;
-    
+
         slot.dataset.slot = slotNumber;
 
         slot.addEventListener('click', function () {
             if (this.classList.contains('occupied')) {
-                // Slot is occupied, show the parking details modal
                 const sampleData = {
                     name: "Kim Danger",
                     vehicleType: "Motorcycle",
                     timeIn: "2025-03-10T11:24:00",
                     timeOut: "2025-03-10T12:24:00"
                 };
-                showParkingDetails(slotNumber, sampleData); // Show parking details modal
+                showParkingDetails(slotNumber, sampleData);
             } else {
-                // Slot is available, handle selection and reservation
-                // Remove selection from other slots
                 document.querySelectorAll('.slot.selected').forEach(s => {
                     s.classList.remove('selected');
                 });
 
-                // Toggle selection
                 this.classList.toggle('selected');
 
                 if (this.classList.contains('selected')) {
                     selectedSlotElement = this;
                     parkingSlotInput.value = slotNumber;
-                    showReservationModal(); // Show reservation modal
+                    showReservationModal();
                 } else {
                     selectedSlotElement = null;
                 }
@@ -521,69 +500,79 @@
         return slot;
     }
 
+    // Show/Hide Reservation Modal
+    function showReservationModal() {
+        reservationModal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
 
+    function hideReservationModal() {
+        reservationModal.classList.remove('active');
+        document.body.style.overflow = '';
+    }
 
-        // RESERVATION MODAL
-        function showReservationModal() {
-            reservationModal.classList.add('active');
-            document.body.style.overflow = 'hidden'; // Prevent scrolling
-        }
-        
-        function hideReservationModal() {
-            reservationModal.classList.remove('active');
-            document.body.style.overflow = ''; // Re-enable scrolling
-        }
-        
-        // Close modal when clicking X or outside
-        closeModal.addEventListener('click', hideReservationModal);
-        reservationModal.addEventListener('click', function(e) {
-            if (e.target === reservationModal) {
-                hideReservationModal();
-            }
-        });
-        
-        // Form submission
-        parkingForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            // Get form values
-            const name = document.getElementById('name').value;
-            const plateNumber = document.getElementById('plateNumber').value;
-            const vehicleType = document.getElementById('vehicleType').value;
-            const timeIn = document.getElementById('timeIn').value;
-            const timeOut = document.getElementById('timeOut').value;
-            const slot = parkingSlotInput.value;
-            
-            // Here you would typically send this data to a server
-            console.log('Reservation Details:', {
-                name,
-                plateNumber,
-                vehicleType,
-                timeIn,
-                timeOut,
-                slot,
-                status: 'Reserved'
-            });
-            
-            // Mark the slot as occupied
-            if (selectedSlotElement) {
-                selectedSlotElement.classList.remove('selected');
-                selectedSlotElement.classList.add('occupied');
-                selectedSlotElement.innerHTML = `
-                    <div class="corner-notch"></div>
-                    <i class="fas fa-lock slot-icon"></i>
-                    <div class="slot-number">${slot.substring(1)}</div>
-                `;
-            }
-            
-            // Reset form and close modal
-            parkingForm.reset();
+    // Close modal (X button or outside click)
+    closeModal.addEventListener('click', hideReservationModal);
+    reservationModal.addEventListener('click', function(e) {
+        if (e.target === reservationModal) {
             hideReservationModal();
-            
-            // Show success message
-            alert(`Reservation for slot ${slot} confirmed!`);
+        }
+    });
+
+    // RESERVATION FORM SUBMISSION WITH SWEETALERT
+    parkingForm.addEventListener('submit', function(e) {
+        e.preventDefault(); 
+
+        Swal.fire({
+            html: `
+            <div style="display: flex; flex-direction: column; align-items: center; padding: 10px;">
+                <div style="background-color: #3D9D46; color: white; font-weight: bold; font-size: 30px; width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; border-radius: 50%; margin-bottom: 20px;">
+                !
+                </div>
+                <span style="font-size: 18px; font-weight: 600;">Do you want to confirm reservation?</span>
+            </div>
+            `,
+            showCancelButton: true,
+            confirmButtonText: 'Yes',
+            cancelButtonText: 'Cancel',
+            confirmButtonColor: '#3B8D43',
+            cancelButtonColor: '#ffffff',
+            reverseButtons: true,
+            backdrop: false, 
+            customClass: {
+                cancelButton: 'swal-cancel-button',
+                confirmButton: 'swal-confirm-button'
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Saved Successfully!',
+                    showConfirmButton: false,
+                    timer: 1500,
+                    backdrop: false,
+                    willClose: () => {
+                        if (selectedSlotElement) {
+                            selectedSlotElement.classList.remove('selected');
+                            selectedSlotElement.classList.add('occupied');
+                            const slotNumber = selectedSlotElement.dataset.slot;
+                            selectedSlotElement.innerHTML = `
+                                <div class="corner-notch"></div>
+                                <i class="fas fa-lock slot-icon"></i>
+                                <div class="slot-number">${slotNumber.substring(1)}</div>
+                            `;
+                        }
+
+                        parkingForm.reset();
+                        hideReservationModal();
+                    }
+                });
+            } 
         });
-        
+    });
+
+            
         // Set default time values (current time for timeIn, +1 hour for timeOut)
         window.addEventListener('DOMContentLoaded', () => {
             const now = new Date();
@@ -639,14 +628,10 @@
     confirmPaymentBtn.addEventListener('click', () => {
         window.location.href = 'payment.html'; // Redirect
     });
-
-
-        
     </script>
-    
 </div>
 
-        <div id="reports" class="tab">
+    <div id="reports" class="tab">
     <h2>Reports</h2>
 
     <!-- Search Bar -->
@@ -655,20 +640,57 @@
         <i class="fas fa-search search-icon"></i>
     </div>
 
-    <!-- Filters -->
     <div class="filters">
         <label class="filter-label">Filter By:</label>
-        <select class="filter-dropdown">
-            <option>Select Date</option>
+    
+        <!-- Date Picker for Date and Time -->
+        <input type="datetime-local" id="filter-date" class="filter-dropdown" />
+    
+        <!-- Dropdown for Vehicle Type -->
+        <select id="vehicle-type" class="filter-dropdown">
+            <option value="" disabled selected>Select Vehicle Type</option>
+            <option value="car">Car</option>
+            <option value="motorcycle">Motorcycle</option>
+            <option value="e-bike">E-Bike</option>
+            <option value="bicycle">Bicycle</option>
         </select>
-        <select class="filter-dropdown">
-            <option>Vehicle Type</option>
+    
+        <!-- Dropdown for Parking Slot -->
+        <select id="park-slot" class="filter-dropdown">
+            <option value="" disabled selected>Select Parking Slot</option>
+            <option value="A">Slot A (A1-A16)</option>
+            <option value="B">Slot B (B1-B16)</option>
+            <option value="C">Slot C (C1-C16)</option>
         </select>
-        <select class="filter-dropdown">
-            <option>Park Slot</option>
-        </select>
-        <button class="generate-btn">Generate</button>
+    
+        <!-- Generate Button -->
+        <button class="generate-btn" onclick="generate()">Generate</button>
+
+        <!-- Display Filtered Results -->
+        <div id="results" class="results"></div>
     </div>
+
+    <script>
+        function generate() {
+    const date = document.getElementById("filter-date").value;
+    const vehicleType = document.getElementById("vehicle-type").value;
+    const parkSlot = document.getElementById("park-slot").value;
+
+    // Check if required fields are filled
+    if (!date || !vehicleType || !parkSlot) {
+        alert("Please fill out all fields.");
+        return;
+    }
+
+    // Construct the URL with selected filters as query parameters
+    const url = `generate.html?date=${encodeURIComponent(date)}&vehicle=${encodeURIComponent(vehicleType)}&slot=${encodeURIComponent(parkSlot)}`; 
+
+    // Redirect to the results page
+    window.location.href = url; // Correctly redirect to results.html
+}
+
+    </script>
+    
 
     <!-- Reports Table -->
     <div class="table-container">
@@ -731,6 +753,128 @@
  </div>
     </div>
         </div>
+
+
+<script>
+function generate() {
+    const date = document.getElementById("filter-date").value;
+    const vehicleType = document.getElementById("vehicle-type").value;
+    const parkSlot = document.getElementById("park-slot").value;
+
+    if (!date || !vehicleType || !parkSlot) {
+        alert("Please select all fields.");
+        return;
+    }
+
+    if (!window.originalFiltersHTML) {
+        window.originalFiltersHTML = document.getElementById("reports").innerHTML;
+    }
+
+    const reservationData = [
+        { name: "Lindsey Stroud", vehicleType: "Car", timeIn: "1:00 PM", timeOut: "-", parkSlot: "A05", plateNo: "ABC1234", status: "Parked" },
+        { name: "Michael Owen", vehicleType: "Motorcycle", timeIn: "12:05 PM", timeOut: "12:45 PM", parkSlot: "F01", plateNo: "FGH5692", status: "Exited" },
+        { name: "Mary Jane", vehicleType: "Electric Bike", timeIn: "11:55 AM", timeOut: "-", parkSlot: "M10", plateNo: "YUK6038", status: "Parked" },
+        { name: "Peter Doodle", vehicleType: "Bicycle", timeIn: "11:52 AM", timeOut: "12:22 PM", parkSlot: "H08", plateNo: "FKCM0987", status: "Exited" }
+    ];
+
+    const generatedOn = new Date().toLocaleString();
+
+    const reportHTML = `
+        <div class="header" style="text-align:center; margin-bottom:30px;">
+            <h1>LOTUS CENTRAL MALL, INC.</h1>
+            <h2>Nueno Avenue, Imus, Cavite</h2>
+            <h3>Parking Slot Report</h3>
+            <p>Generated On: ${generatedOn}</p>
+        </div>
+
+        <div class="filters" style="margin-bottom:30px; text-align:center;">
+            <div style="font-size:16px; margin-top:10px; text-align:left; display:inline-block;">
+                <p><strong>Date/Time:</strong> ${date}</p>
+                <p><strong>Vehicle Type:</strong> ${vehicleType}</p>
+                <p><strong>Parking Slot:</strong> ${parkSlot}</p>
+            </div>
+        </div>
+
+        <div class="reservation-section" style="margin-top:30px;">
+            <table id="reservation-table" style="width:90%; margin:0 auto; border-collapse:collapse; background:white; box-shadow:0 2px 8px rgba(0,0,0,0.1);">
+                <thead>
+                    <tr>
+                        <th style="background:#1e3c72; color:white;">Name</th>
+                        <th style="background:#1e3c72; color:white;">Vehicle Type</th>
+                        <th style="background:#1e3c72; color:white;">Time In</th>
+                        <th style="background:#1e3c72; color:white;">Time Out</th>
+                        <th style="background:#1e3c72; color:white;">Park Slot</th>
+                        <th style="background:#1e3c72; color:white;">Plate No.</th>
+                        <th style="background:#1e3c72; color:white;">Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${reservationData.map(item => `
+                        <tr>
+                            <td style="border:1px solid #ccc; padding:10px;">${item.name}</td>
+                            <td style="border:1px solid #ccc; padding:10px;">${item.vehicleType}</td>
+                            <td style="border:1px solid #ccc; padding:10px;">${item.timeIn}</td>
+                            <td style="border:1px solid #ccc; padding:10px;">${item.timeOut}</td>
+                            <td style="border:1px solid #ccc; padding:10px;">${item.parkSlot}</td>
+                            <td style="border:1px solid #ccc; padding:10px;">${item.plateNo}</td>
+                            <td style="border:1px solid #ccc; padding:10px;">${item.status}</td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="buttons" style="text-align:center; margin-top:30px;">
+            <button onclick="downloadPDF()" style="background:#3498db; color:white; padding:12px 25px; font-size:16px; border:none; border-radius:5px; cursor:pointer;">Download Report</button>
+            <button onclick="backToFilters()" style="background:#95a5a6; color:white; padding:12px 25px; font-size:16px; margin-left:10px; border:none; border-radius:5px; cursor:pointer;">Back</button>
+        </div>
+    `;
+
+    const reportsTab = document.getElementById("reports");
+    reportsTab.innerHTML = reportHTML;
+
+    window.downloadPDF = function() {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF('p', 'pt', 'a4');
+
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(20);
+        doc.text('LOTUS CENTRAL MALL, INC.', 300, 40, { align: 'center' });
+        doc.setFontSize(14);
+        doc.text('Nueno Avenue, Imus, Cavite', 300, 60, { align: 'center' });
+        doc.text('Parking Slot Report', 300, 80, { align: 'center' });
+
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(11);
+        doc.text(`Generated On: ${generatedOn}`, 40, 110);
+
+        doc.text(`Date/Time: ${date}`, 40, 140);
+        doc.text(`Vehicle Type: ${vehicleType}`, 40, 160);
+        doc.text(`Parking Slot: ${parkSlot}`, 40, 180);
+
+        const tableData = reservationData.map(item => [
+            item.name, item.vehicleType, item.timeIn, item.timeOut, item.parkSlot, item.plateNo, item.status
+        ]);
+
+        doc.autoTable({
+            startY: 210,
+            head: [["Name", "Vehicle Type", "Time In", "Time Out", "Park Slot", "Plate No.", "Status"]],
+            body: tableData,
+            styles: { halign: 'center', fontSize: 10 },
+            headStyles: { fillColor: [41, 128, 185], textColor: 255 },
+            alternateRowStyles: { fillColor: [245, 245, 245] }
+        });
+
+        doc.save('Lotus_Mall_Report.pdf');
+    };
+
+    window.backToFilters = function() {
+        document.getElementById("reports").innerHTML = window.originalFiltersHTML;
+    };
+}
+</script>
+
+        
     
     <script>
     // Function to handle tab switching

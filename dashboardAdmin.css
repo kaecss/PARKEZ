@@ -256,7 +256,7 @@ tr:hover {
 .search-container {
     display: flex;
     justify-content: flex-end;
-    margin-bottom: 20px;
+    margin-bottom: 30px;
 }
 
 .search-input {
@@ -268,7 +268,8 @@ tr:hover {
 }
 
 .search-icon {
-    margin-left: -30px;
+    margin-left: -40px;
+    padding: 10px 10px;
     color: #777;
     cursor: pointer;
 }
@@ -294,19 +295,44 @@ tr:hover {
     cursor: pointer;
 }
 
-.generate-container {
-    display: flex;
-    justify-content: flex-end;
-    margin-bottom: 15px;
-}
-
+/* Generate */
 .generate-btn {
-    background-color: #3bb54a;
+    width: 100px;
+    padding: 12px;
+    background-color: #4CAF50;
     color: white;
+    font-size: 16px;
     border: none;
-    padding: 10px 18px;
     border-radius: 8px;
     cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.generate-btn:hover {
+    background-color: #45a049;
+}
+
+.results {
+    margin-top: 30px;
+    font-size: 16px;
+    color: #333;
+}
+
+.results h3 {
+    font-size: 18px;
+    color: #4CAF50;
+}
+
+.results p {
+    margin-bottom: 10px;
+}
+
+.select-wrapper {
+    margin-bottom: 20px;
+}
+
+.select-wrapper select {
+    width: 100%;
 }
 
 /* Table Styling */
